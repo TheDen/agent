@@ -9,6 +9,7 @@ import (
 
 	"github.com/buildkite/agent/agent"
 	"github.com/buildkite/agent/cliconfig"
+	"github.com/buildkite/agent/experiments"
 	"github.com/buildkite/agent/logger"
 	"github.com/buildkite/shellwords"
 	"github.com/urfave/cli"
@@ -250,10 +251,11 @@ var AgentStartCommand = cli.Command{
 			Usage:  "Don't allow this agent to load plugins",
 			EnvVar: "BUILDKITE_NO_PLUGINS",
 		},
-		cli.BoolTFlag{
+		cli.BoolFlag{
 			Name:   "no-plugin-validation",
 			Usage:  "Don't validate plugin configuration and requirements",
 			EnvVar: "BUILDKITE_NO_PLUGIN_VALIDATION",
+			Hidden: true,
 		},
 		cli.BoolFlag{
 			Name:   "no-local-hooks",
@@ -331,6 +333,13 @@ var AgentStartCommand = cli.Command{
 		// Turning off command eval or local hooks will also turn off plugins.
 		if cfg.NoCommandEval || cfg.NoLocalHooks {
 			cfg.NoPlugins = true
+		}
+
+		// Initially, plugin validation must be enabled via an experiment
+		if experiments.IsEnabled("plugin-validation") {
+			cfg.NoPluginValidation = false
+		} else {
+			cfg.NoPluginValidation = true
 		}
 
 		// Guess the shell if none is provided
