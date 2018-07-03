@@ -18,13 +18,20 @@ If an experiment doesn't exist, no error will be raised.
 
 ## Available Experiments
 
+### `plugin-validation`
+
+This turns on validating plugin configuration as part of plugin checkout. Looks for a `plugin.yml` or `plugin.json`. See https://github.com/buildkite-plugins/docker-compose-buildkite-plugin/blob/master/plugin.yml for an example.
+
+**Status**: Broadly useful, we'd like this to be the standard behaviour. 👌
+
+
 ### `agent-socket`
 
 The agent currently exposes a per-session token to jobs called `BUILDKITE_AGENT_ACCESS_TOKEN`. This token can be used for pipeline uploads, meta-data get/set and artifact access within the job. Leaking it in logging can be dangerous, as anyone with that token can access whatever your agent could.
 
 The agent socket experiment creates a local proxy for the Agent API with a single-use api token. This means it's impossible to leak this information outside of a job. On Windows, this uses a local HTTP bind, and a unix domain socket on other systems.
 
-**Status**: broadly useful, we'd like this to be the standard behaviour. 👌
+**Status**: Broadly useful, we'd like this to be the standard behaviour. 👌
 
 ### `msgpack`
 
